@@ -1,0 +1,80 @@
+{
+  "type" : "remote",
+  "remote" : {
+    "urlGetDocuments"               : "http://stumpjumper.lab4.eng.bos.redhat.com:36613/drupal/events",
+    "listDocumentsMode"             : "simple",
+    "spacesIndexed"                 : "MAIN",
+    "timeout"                       : "20s",
+    "indexUpdatePeriod"             : "10m",
+    "maxIndexingThreads"            : 1
+  },
+  "index" : {
+    "index"                         : "data_jbossdeveloper_event",
+    "type"                          : "jbossdeveloper_event",
+    "remote_field_document_id"      : "nid",
+    "field_document_id"             : "sys_id",
+    "fields" : {
+      "start_date"                  : { "remote_field" : "pre_start_date" },
+      "end_date"                    : { "remote_field" : "prep_end_date" },
+      "sys_title"                   : { "remote_field" : "prep_sys_title"},
+      "sys_description"             : { "remote_field" : "prep_content_plaintext"},
+      "image"                       : { "remote_field" : "prep_image"},
+      "event_url"                   : { "remote_field" : "prep_event_url"},
+      "format"                      : { "remote_field" : "prep_format"},
+      "featured"                    : { "remote_field" : "prep_featured"},
+      "site"                        : { "remote_field" : "prep_site"},
+      "img_upload"                  : { "remote_field" : "prep_img_upload" },
+      "sys_content_provider"        : { "remote_field" : "prep_sys_content_provider"},
+      "sys_content_id"              : { "remote_field" : "prep_id_remote"},
+      "sys_content_type"            : { "remote_field" : "prep_sys_content_type"},
+      "sys_id"                      : { "remote_field" : "prep_id"},
+      "sys_type"                    : { "remote_field" : "event" },
+      "sys_updated"                 : { "remote_field" : "prep_sys_updated" },
+      "sys_url_view"                : { "remote_field" : "prep_event_url" },
+      "sys_tags"                    : { "remote_field" : "prep_sys_tags"}
+
+    },
+    "preprocessors" : [
+      {
+        "name"     : "Remote id copy",
+        "class"    : "org.jboss.elasticsearch.tools.content.AddMultipleValuesPreprocessor",
+        "settings" : {
+          "prep_id_remote"            : "{nid}",
+          "prep_id"                   : "jbossdeveloper_event-{nid}",
+          "prep_sys_created"          : "{created}",
+          "pre_start_date"            : "{field_start_date}",
+          "prep_end_date"             : "{field_end_date}",
+          "prep_image"                     : "{field_event_image}",
+          "prep_format"                    : "{field_event_format}",
+          "prep_featured"                  : "{field_on_homepage}",
+          "prep_site"                      : "{field_site}",
+          "prep_sys_content_provider"      : "jboss-developer",
+          "prep_sys_content_type"          : "type",
+          "prep_sys_tags"                  : "[]",
+          "prep_event_url"            : "{field_more_details}",
+          "prep_sys_title"            : "{title}",
+          "prep_sys_tags"            : "{field_data_tags}",
+          "prep_img_upload"            : "{field_event_background_image}"
+
+        }
+      },
+      {
+        "name"     : "Body HTML stripper",
+        "class"    : "org.jboss.elasticsearch.tools.content.StripHtmlPreprocessor",
+        "settings" : {
+          "source_field" : "field_description",
+          "target_field" : "prep_content_plaintext"
+        }
+      },
+      {
+        "name"     : "Updated filler",
+        "class"    : "org.jboss.elasticsearch.tools.content.AddCurrentTimestampPreprocessor",
+        "settings" : { "field" : "prep_sys_updated" }
+      }
+
+    ]
+  },
+  "activity_log" : {
+    "index":"stats_jbossdeveloper_events_river"
+  }
+}

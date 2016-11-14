@@ -1,0 +1,25 @@
+{
+  "name": "events",
+  "description": "Provider used by the Red Hat Developer website event management",
+  "contact_email": "dcoughli@redhat.com",
+  "super_provider": false,
+  "type": {
+    "jbossdeveloper_event": {
+      "description":"Events from Drupal",
+      "sys_type":"event",
+      "sys_content_content-type" : "text/html",
+      "persist" : true,
+      "input_preprocessors": [],
+      "index": {
+        "name":"data_jbossdeveloper_event",
+        "type":"jbossdeveloper_event"
+      },
+      "indexer" : {
+        "type" : "elasticsearch-river-remote",
+        "name" : "events_drupal"
+      }
+    }
+
+  }
+
+}
